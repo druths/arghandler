@@ -1,14 +1,14 @@
 # arghandler #
 *Making argparse even more awesome*
 
-We love [argparse](https://docs.python.org/3/library/argparse.html), but there
-are some things that it simply doesn't help with as much as we'd like. Enter
+I love [argparse](https://docs.python.org/3/library/argparse.html), but there
+are some things that it simply doesn't help with as much as I'd like. Enter
 arghandler.
 
 The goal behind arghandler is to provide all the capabilities of argparse
 *plus* some high-level capabilities that crop up a lot when writing
-command-line tools.  The goal here is high quality command line interfaces with
-minimal code.
+command-line tools: the library aims for high quality command line interfaces
+with (even more) minimal code.
 
 At present, arghandler provides two key capabilities:
 
