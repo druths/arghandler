@@ -1,4 +1,4 @@
-# arghandler #
+# arghandler [![Build Status](https://travis-ci.org/druths/arghandler.svg?branch=master)](https://travis-ci.org/druths/arghandler) #
 *Making argparse even more awesome*
 
 I love [argparse](https://docs.python.org/3/library/argparse.html), but there
