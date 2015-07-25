@@ -45,6 +45,12 @@ class ArgumentHandler(argparse.ArgumentParser):
 		# setup the class
 		argparse.ArgumentParser.__init__(self,*args,**kwargs)
 
+	def ignore_subcommands(self):
+		"""
+		Force this ArgumentHandler to not handle any subcommands it might find or be given.
+		"""
+		self._use_subcommands = False
+
 	def set_logging_argument(self,*names,**kwargs): #,default_level=logging.ERROR,config_fxn=None):
 		"""
 		names is the set of positional arguments that will set the logging
