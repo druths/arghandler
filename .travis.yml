@@ -9,4 +9,7 @@ script:
   - python -m arghandler.tests.decorator
 notifications:
   email:
-    - druths@networkdynamics.org
+    recipients:
+      - druths@networkdynamics.org
+	on_success: never
+	on_failure: always
