@@ -66,13 +66,13 @@ class ArgumentHandler(argparse.ArgumentParser):
 		config_fxn = kwargs.pop('config_fxn',default_log_config)
 
 		if len(kwargs) > 0:
-			raise ValueError, 'unexpected keyword arguments: %s' % ','.join(kwargs.keys())
+			raise ValueError('unexpected keyword arguments: %s' % ','.join(kwargs.keys()))
 
 		# check the names
 		longest_name = ''
 		for name in names:
 			if not name.startswith('-'):
-				raise ValueError, 'all logging level argument names must start with a "-"' 
+				raise ValueError('all logging level argument names must start with a "-"')
 
 			oname = name.replace('-','')
 			if len(oname) > len(longest_name):
@@ -82,7 +82,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 
 		# covert default logging level to a string
 		if default_level not in LOG_LEVEL_STR_LOOKUP:
-			raise ValueError, 'the default logging level must be a valid logging level'
+			raise ValueError('the default logging level must be a valid logging level')
 
 		default_level = LOG_LEVEL_STR_LOOKUP[default_level]
 		
@@ -104,14 +104,14 @@ class ArgumentHandler(argparse.ArgumentParser):
 	def set_subcommands(self,subcommand_lookup):
 		
 		if type(subcommand_lookup) is not dict:
-			raise TypeError, 'subcommands must be specified as a dict'
+			raise TypeError('subcommands must be specified as a dict')
 
 		# sanity check the subcommands
 		for cn,cf in subcommand_lookup.items():
 			if type(cn) is not str:
-				raise TypeError, 'subcommand keys must be strings. Found %s' % str(cn)
+				raise TypeError('subcommand keys must be strings. Found %s' % str(cn))
 			if not callable(cf):
-				raise TypeError, 'subcommand with name %s must be callable' % cn
+				raise TypeError('subcommand with name %s must be callable' % cn)
 
 		# store the subcommands
 		self._subcommand_lookup = dict(subcommand_lookup)
@@ -137,7 +137,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 		# add in subcommands if appropriate
 		if not self._use_subcommands:
 			if len(self._subcommand_lookup) > 0:
-				print 'warning: subcommands are not going to be used'
+				print('warning: subcommands are not going to be used')
 		else:
 			self.add_argument('cmd',choices=self._subcommand_lookup.keys())
 			self.add_argument('cargs',nargs=argparse.REMAINDER,

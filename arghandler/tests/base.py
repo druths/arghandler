@@ -11,7 +11,7 @@ class LoggingTestCase(unittest.TestCase):
 		handler.run(['-L','ERROR'])
 
 		logger = logging.getLogger()
-		self.assertEquals(logger.level,logging.ERROR)
+		self.assertEqual(logger.level,logging.ERROR)
 		
 class ContextTestCase(unittest.TestCase):
 
@@ -21,7 +21,7 @@ class ContextTestCase(unittest.TestCase):
 		def cmd1(context,args):
 			self.cmd1_has_run = True
 			self.assertTrue(context.link)
-			self.assertEquals(context.arg2,'foobar')
+			self.assertEqual(context.arg2,'foobar')
 
 		handler = ArgumentHandler()
 		handler.set_subcommands({'cmd1':cmd1})
@@ -39,14 +39,14 @@ class ContextTestCase(unittest.TestCase):
 
 		def cmd1(context,args):
 			self.cmd_has_run = True
-			self.assertEquals(context,self.CONTEXT)
-			self.assertEquals(args[0],'foobar')
+			self.assertEqual(context,self.CONTEXT)
+			self.assertEqual(args[0],'foobar')
 
 		def context_fxn(args):
 			self.context_has_run = True
 
-			self.assertEquals(args.a1,'hello')
-			self.assertEquals(args.a2,'there')
+			self.assertEqual(args.a1,'hello')
+			self.assertEqual(args.a2,'there')
 
 			return self.CONTEXT
 
