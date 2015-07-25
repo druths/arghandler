@@ -7,4 +7,6 @@ python:
 script: 
   - python -m arghandler.test
   - python -m arghandler.tests.decorator
-
+notifications:
+  email:
+    - druths@networkdynamics.org
