@@ -3,7 +3,7 @@ arghandler
 -----------
 *Making argparse even more awesome*
 
-We love [argparse]{https://docs.python.org/3/library/argparse.html}, but there
+We love [argparse](https://docs.python.org/3/library/argparse.html), but there
 are some things that it simply doesn't help with as much as we'd like. Enter
 arghandler.
 
@@ -14,17 +14,17 @@ minimal code.
 
 At present, arghandler provides two key capabilities:
 
-  #. Adding subcommands with basically zero extra lines of code. This gives
+  1. Adding subcommands with basically zero extra lines of code. This gives
   support for writing programs like `git` and `svn` which have nested
   subcommands.
 
-  #. Configuring the logging framework (e.g., the desired logging level) from
+  1. Configuring the logging framework (e.g., the desired logging level) from
   the command line - again with basically one line of code.
 
 We have lots more improvements we want to add - and as we have time and receive
 feedback, we'll add more features.
 
-If you have ideas, [email me]{mailto:druths@networkdynamics.org} or code it up
+If you have ideas, [email me](mailto:druths@networkdynamics.org) or code it up
 and generate a pull request!
 
 ============
@@ -39,14 +39,14 @@ or
 
 	easy_install argparse
 
-You can find argparse on [pypi]{http://TODO} for relevant details should you need them.
+You can find argparse on [pypi](http://TODO) for relevant details should you need them.
 
 ======
 Usage
 ======
 
 Just like with
-[argparse.ArgumentParser]{https://docs.python.org/3/library/argparse.html#argumentparser-objects},
+[argparse.ArgumentParser](https://docs.python.org/3/library/argparse.html#argumentparser-objects),
 in `arghandler` everything revolves around `ArgumentHandler`. In fact, it's
 (not so secretly) a subclass of ArgumentParser, so you can use it exactly the
 way you use `ArgumentParser`.  But `ArgumentHandler` has some new tricks.
@@ -80,13 +80,13 @@ Invoking ArgumentHandler
 	value of `args.cmd` and the subcommand's arguments will be given by
 	`args.cargs`.
 
-*`ArgumentHandler.run(argv,context_fxn)`* makes the class perform its more unique and powerful capabilities.  Notably: configuring the logger and running subcommands.  As with `parse_args(...)`, if `argv` is not specified, then `sys.argv` will be used.  The `context_fxn` is also optional and is used as part of subcommand processing.  See that [section]{#subcommands} below for more details.
+*`ArgumentHandler.run(argv,context_fxn)`* makes the class perform its more unique and powerful capabilities.  Notably: configuring the logger and running subcommands.  As with `parse_args(...)`, if `argv` is not specified, then `sys.argv` will be used.  The `context_fxn` is also optional and is used as part of subcommand processing.  See that [section](#subcommands) below for more details.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 Setting the logging level
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you use the python [logging]{https://docs.python.org/3/library/logging.html} package, this feature will save you some time.
+If you use the python [logging](https://docs.python.org/3/library/logging.html) package, this feature will save you some time.
 
 The `ArgumentParser.set_logging_argument(...)` method allows you to specify a command-line argument that will set the logging level.  The method accepts several arguments:
 
@@ -96,7 +96,7 @@ The `ArgumentParser.set_logging_argument(...)` method allows you to specify a co
   * `*names` stands in for one or more arguments that specify the 
 	argument names that will be used. These follow the same rules as ones
 	passed into
-	[ArgumentParser.add_argument(...)]{https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument}.
+	[ArgumentParser.add_argument(...)](https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument).
 	Moreover, they MUST be optional arguments (i.e., start with a '-'
 	character).
 
@@ -106,7 +106,7 @@ The `ArgumentParser.set_logging_argument(...)` method allows you to specify a co
 
   * `config_fxn` allows the developer to write special logging 
 	configuration code.  If not specified, the
-	[logging.basicConfig]{https://docs.python.org/3/library/logging.html#logging.basicConfig}
+	[logging.basicConfig](https://docs.python.org/3/library/logging.html#logging.basicConfig)
 	function will be invoked with the appropriate logging level. The function
 	must accept two arguments: the logging level and the namespace args object
 	returned by the `ArgumentParser.parse_args` method. The configuration
