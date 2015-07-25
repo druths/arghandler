@@ -1,6 +1,4 @@
------------
-arghandler
------------
+# arghandler #
 *Making argparse even more awesome*
 
 We love [argparse](https://docs.python.org/3/library/argparse.html), but there
@@ -27,9 +25,7 @@ feedback, we'll add more features.
 If you have ideas, [email me](mailto:druths@networkdynamics.org) or code it up
 and generate a pull request!
 
-============
-Installation
-============
+## Installation ##
 
 Use `pip` or `easy_install` to install the library:
 
@@ -41,9 +37,7 @@ or
 
 You can find argparse on [pypi](http://TODO) for relevant details should you need them.
 
-======
-Usage
-======
+## Usage ##
 
 Just like with
 [argparse.ArgumentParser](https://docs.python.org/3/library/argparse.html#argumentparser-objects),
@@ -63,9 +57,7 @@ To benefit from `ArgumentHandler`, your command-line configuration code will fol
 
 Now for some details...
 
-~~~~~~~~~~~~~~~~~~~~~~~~
-Invoking ArgumentHandler
-~~~~~~~~~~~~~~~~~~~~~~~~
+### Invoking ArgumentHandler ###
 
 `ArgumentHandler` can be invoked on arguments in two ways.  
 
@@ -82,9 +74,7 @@ Invoking ArgumentHandler
 
 *`ArgumentHandler.run(argv,context_fxn)`* makes the class perform its more unique and powerful capabilities.  Notably: configuring the logger and running subcommands.  As with `parse_args(...)`, if `argv` is not specified, then `sys.argv` will be used.  The `context_fxn` is also optional and is used as part of subcommand processing.  See that [section](#subcommands) below for more details.
 
-~~~~~~~~~~~~~~~~~~~~~~~~~
-Setting the logging level
-~~~~~~~~~~~~~~~~~~~~~~~~~
+### Setting the logging level ###
 
 If you use the python [logging](https://docs.python.org/3/library/logging.html) package, this feature will save you some time.
 
@@ -122,9 +112,7 @@ If you do want to do some customization, then your code will look like this
 	handler.set_logging_argument('-l','-llevel',
 		config_fxn=lambda level,args: logging.basicConfig(level=level,format='%(message)'))
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<a name="subcommands"></a>Declaring subcommands using decorators
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### <a name="subcommands"></a>Declaring subcommands using decorators ###
 
 This feature makes it possible to write nested commands like `git commit` and
 `svn checkout` with basically zero boilerplate code.  To do this `arghandler`
@@ -163,9 +151,7 @@ context-producing function to the `ArgumentHandler.run(...)` function:
 	# in this case, it will be the string '127.0.0.1'
 	handler.run(['-s','127.0.0.1','ping'],context_fxn=lambda args: args.server
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Declaring subcommands without decorators
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Declaring subcommands without decorators ###
 
 While decorators are the preferred way to specify subcommands, subcommands can also be specified using the `ArgumentHandler.set_subcommands(...)` function.  This method expects a dictionary: keys are command names, values are the command functions:
 
@@ -185,9 +171,7 @@ All the logic and rules around the context function apply here.  Moreoever, the
 complete set of subcommands include those specified using decorators AND those
 specified through the `set_subcommands(...)` method.
 
-====================
-Some best practices
-====================
+## Some best practices ##
 
 *Use `ArgumentParser` or `ArgumentHandler` inside subcommands.* This will
 ensure that informative help messages are available for all your subcommands.
