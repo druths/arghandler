@@ -7,6 +7,7 @@ python:
 script: 
   - python -m arghandler.test
   - python -m arghandler.tests.decorator
+  - python -m arghandler.tests.decorator2
 notifications:
   email:
     recipients:
