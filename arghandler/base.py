@@ -183,9 +183,6 @@ class ArgumentHandler(argparse.ArgumentParser):
 		if self._has_parsed:
 			raise Exception('ArgumentHandler.parse_args can only be called once')
 
-		if argv is None:
-			argv = sys.argv
-
 		# collect subcommands into _subcommand_lookup
 		for cn,cf in registered_subcommands.items():
 			self._subcommand_lookup[cn] = cf
