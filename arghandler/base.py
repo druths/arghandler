@@ -27,11 +27,18 @@ LOG_LEVEL_STR_LOOKUP = { logging.DEBUG:'DEBUG', logging.INFO:'INFO',
 						logging.CRITICAL:'CRITICAL' }
 
 def default_log_config(level,args):
+	"""
+	This is the default function used to configure the logging level.
+	"""
 	logging.basicConfig(level=level)
 
 # decorator
 registered_subcommands = {}
 def subcmd(cmd_fxn,name=None):
+	"""
+	This decorator is used to register functions as subcommands with instances
+	of ArgumentHandler.
+	"""
 	global registered_subcommands
 	
 	# get the name of the command
@@ -45,7 +52,10 @@ def subcmd(cmd_fxn,name=None):
 class ArgumentHandler(argparse.ArgumentParser):
 
 	def __init__(self,*args,**kwargs):
-
+		"""
+		All constructor arguments are the same as found in `argparse.ArgumentParser`.
+		"""
+		
 		### extract any special keywords here
 		# None to extract...
 
@@ -69,13 +79,19 @@ class ArgumentHandler(argparse.ArgumentParser):
 
 	def set_logging_argument(self,*names,**kwargs): #,default_level=logging.ERROR,config_fxn=None):
 		"""
-		names is the set of positional arguments that will set the logging
-		level.
+		Enable and set an optional argument for setting the logging level that will be
+		used by the built-in logging framework.
 
-		default_level is the default logging level that will be set
+		  * `names` is the set of positional arguments that will set the logging
+			level.
 
-		config_fxn allows special handling of the logger config.  otherwise,
-		basicConfig will be used.
+		  * `default_level` is the default logging level that will be set
+
+		  * `config_fxn` allows special handling of the logger config.
+			Otherwise, basicConfig will be used. The config function should
+			accept two arguments - the first the logging level, the second the
+			full set of arguments past to the command.
+
 		"""
 		# get the keyword args
 		default_level = kwargs.pop('default_value',logging.ERROR)
@@ -110,6 +126,9 @@ class ArgumentHandler(argparse.ArgumentParser):
 		return
 		
 	def add_argument(self,*args,**kwargs):
+		"""
+		This has the same functionality as `argparse.ArgumentParser.add_argument`.
+		"""
 		# just watch for the REMAINDER nargs to see if subcommands are relevant
 
 		if self._ignore_remainder and 'nargs' in kwargs and kwargs['nargs'] == argparse.REMAINDER:
@@ -118,7 +137,12 @@ class ArgumentHandler(argparse.ArgumentParser):
 		return argparse.ArgumentParser.add_argument(self,*args,**kwargs)
 
 	def set_subcommands(self,subcommand_lookup):
-		
+		"""
+		Provide a set of subcommands that this instance of ArgumentHandler should 
+		support.  This is an alternative to using the decorator `@subcmd`. Note that
+		the total set of subcommands supported will be those specified in this method 
+		combined with those identified by the decorator.
+		"""
 		if type(subcommand_lookup) is not dict:
 			raise TypeError('subcommands must be specified as a dict')
 
@@ -135,6 +159,9 @@ class ArgumentHandler(argparse.ArgumentParser):
 		return
 
 	def parse_args(self,argv=None):	
+		"""
+		Works the same as `argparse.ArgumentParser.parse_args`.
+		"""
 		global registered_subcommands
 
 		if self._has_parsed:
@@ -165,7 +192,21 @@ class ArgumentHandler(argparse.ArgumentParser):
 		return args
 
 	def run(self,argv=None,context_fxn=None):
-		
+		"""
+		This method triggers a three step process:
+
+		  1) Parse the arguments in `argv`. If not specified, `sys.argv` is
+		     used.
+
+		  2) Configure the logging level.  This only happens if the 
+		     `set_logging_argument` was called.
+		  
+		  3) Run the appropriate subcommand.  This only happens if subcommands
+		     are available and enabled. Prior to the subcommand being run,
+			 the `context_fxn` is called.  This function accepts one argument -
+			 the namespace returned by a call to `parse_args`.
+
+		"""
 		# get the arguments
 		args = self.parse_args(argv)
 
