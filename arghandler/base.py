@@ -17,6 +17,7 @@ limitations under the License.
 import sys
 import argparse
 import logging
+import inspect
 
 __all__ = ['ArgumentHandler','LOG_LEVEL','subcmd']
 
@@ -32,22 +33,37 @@ def default_log_config(level,args):
 	"""
 	logging.basicConfig(level=level)
 
+#################################
 # decorator
+#################################
 registered_subcommands = {}
-def subcmd(cmd_fxn,name=None):
+def subcmd(arg):
 	"""
 	This decorator is used to register functions as subcommands with instances
 	of ArgumentHandler.
 	"""
+	if inspect.isfunction(arg):
+		return subcmd_fxn(arg,arg.__name__)
+	else:
+		def inner_subcmd(fxn):
+			return subcmd_fxn(fxn,arg)
+
+		return inner_subcmd
+
+def subcmd_fxn(cmd_fxn,name):
 	global registered_subcommands
 	
 	# get the name of the command
-	if name is None:
+	if name is None:	
 		name = cmd_fxn.__name__
 	
 	registered_subcommands[name] = cmd_fxn
 
 	return cmd_fxn
+
+#########################
+# ArgumentHandler class
+#########################
 
 class ArgumentHandler(argparse.ArgumentParser):
 
