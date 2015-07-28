@@ -12,5 +12,5 @@ notifications:
   email:
     recipients:
       - druths@networkdynamics.org
-	on_success: never
-	on_failure: always
+  on_success: never
+  on_failure: always
