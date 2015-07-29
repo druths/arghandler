@@ -35,7 +35,7 @@ or
 
 	easy_install arghandler 
 
-You can find argparse on pypi for relevant details should you need them.
+You can find arghandler on pypi for relevant details should you need them.
 
 ## Usage ##
 
