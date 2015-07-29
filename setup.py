@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(	name='arghandler',
-		version='1.0.1',
+		version='1.0.2',
 		description='argparse extended with awesome feature enhancements to make life easier',
 		author='Derek Ruths',
 		author_email='druths@networkdynamics.org',

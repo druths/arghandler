@@ -29,13 +29,13 @@ and generate a pull request!
 
 Use `pip` or `easy_install` to install the library:
 
-	pip install argparse
+	pip install arghandler
 
 or 
 
-	easy_install argparse
+	easy_install arghandler 
 
-You can find argparse on [pypi](http://TODO) for relevant details should you need them.
+You can find argparse on pypi for relevant details should you need them.
 
 ## Usage ##
 
