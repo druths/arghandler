@@ -110,7 +110,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 
 		"""
 		# get the keyword args
-		default_level = kwargs.pop('default_value',logging.ERROR)
+		default_level = kwargs.pop('default_level',logging.ERROR)
 		config_fxn = kwargs.pop('config_fxn',default_log_config)
 
 		if len(kwargs) > 0:
