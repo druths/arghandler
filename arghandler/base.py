@@ -192,8 +192,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 
 		# add in subcommands if appropriate
 		if not self._use_subcommands:
-			if len(self._subcommand_lookup) > 0:
-				print('warning: subcommands are not going to be used')
+			pass
 		else:
 			self.add_argument('cmd',choices=self._subcommand_lookup.keys())
 			self.add_argument('cargs',nargs=argparse.REMAINDER,
