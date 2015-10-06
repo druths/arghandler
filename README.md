@@ -45,7 +45,8 @@ in `arghandler` everything revolves around `ArgumentHandler`. In fact, it's
 (not so secretly) a subclass of ArgumentParser, so you can use it exactly the
 way you use `ArgumentParser`.  But `ArgumentHandler` has some new tricks.
 
-To benefit from `ArgumentHandler`, your command-line configuration code will follow this logic:
+To benefit from `ArgumentHandler`, your command-line configuration code will
+follow this logic:
 
 	from arghandler import ArgumentHandler
 
@@ -72,13 +73,21 @@ Now for some details...
 	value of `args.cmd` and the subcommand's arguments will be given by
 	`args.cargs`.
 
-*`ArgumentHandler.run(argv,context_fxn)`* makes the class perform its more unique and powerful capabilities.  Notably: configuring the logger and running subcommands.  As with `parse_args(...)`, if `argv` is not specified, then `sys.argv` will be used.  The `context_fxn` is also optional and is used as part of subcommand processing.  See that [section](#subcommands) below for more details.
+*`ArgumentHandler.run(argv,context_fxn)`* makes the class perform its more
+unique and powerful capabilities.  Notably: configuring the logger and running
+subcommands.  As with `parse_args(...)`, if `argv` is not specified, then
+`sys.argv` will be used.  The `context_fxn` is also optional and is used as
+part of subcommand processing.  See that [section](#subcommands) below for more
+details.
 
 ### Setting the logging level ###
 
-If you use the python [logging](https://docs.python.org/3/library/logging.html) package, this feature will save you some time.
+If you use the python [logging](https://docs.python.org/3/library/logging.html)
+package, this feature will save you some time.
 
-The `ArgumentParser.set_logging_argument(...)` method allows you to specify a command-line argument that will set the logging level.  The method accepts several arguments:
+The `ArgumentParser.set_logging_argument(...)` method allows you to specify a
+command-line argument that will set the logging level.  The method accepts
+several arguments:
 
 	ArgumentParser.set_logging_argument(*names,default_level=logging.ERROR,config_fxn=None)
 
@@ -122,26 +131,30 @@ decorator on the function  you want to act as the subcommand.
 	from arghandler import *
 
 	@subcmd
-	def echo(context,args):
+	def echo(parser,context,args):
 		print ' '.join(args)
 	
 	# here we associate the subcommand 'foobar' with function cmd_foobar
 	@subcmd('foobar')
-	def cmd_foobar(context,args):
+	def cmd_foobar(parser,context,args):
 		print 'foobar'
 
 	handler = ArgumentHandler()
 	handler.run(['echo','hello','world']) # echo will be called and 'hello world' will be printed
 
-Notice that the subcommands always take two arguments. `args` is the set of
-arguments that *follow* the subcommand on the command line. `context` is an
-object that can make valuable global information available to subcommands.  By
-default, the context is the namespace object returned by the internal call to
-`ArgumentHandler.parse_args(...)`.  Other contexts can be produced by passing a
-context-producing function to the `ArgumentHandler.run(...)` function:
+Notice that the subcommands always take three arguments. 
+
+`args` is the set of arguments that *follow* the subcommand on the command
+line. 
+
+`context` is an object that can make valuable global information available to
+subcommands.  By default, the context is the namespace object returned by the
+internal call to `ArgumentHandler.parse_args(...)`.  Other contexts can be
+produced by passing a context-producing function to the
+`ArgumentHandler.run(...)` function:
 
 	@subcmd('ping')
-	def ping_server(server_address,args):
+	def ping_server(parser,server_address,args):
 		os.system('ping %s' % server_address)
 
 	handler = ArgumentHandler()
@@ -151,16 +164,25 @@ context-producing function to the `ArgumentHandler.run(...)` function:
 	# in this case, it will be the string '127.0.0.1'
 	handler.run(['-s','127.0.0.1','ping'],context_fxn=lambda args: args.server
 
+Finally, `parser` is an instance of `argparse.ArgumentParser` which has been
+preconfigured to behave properly for the subcommand.  Most crucially, this
+means that `parser.prog` is set to `<top_level_program> <sub_command>` so that
+help messages print out correctly for the subcommand.  Should your subcommand
+want to parse arguments, this parser object should be used.
+
 ### Declaring subcommands without decorators ###
 
-While decorators are the preferred way to specify subcommands, subcommands can also be specified using the `ArgumentHandler.set_subcommands(...)` function.  This method expects a dictionary: keys are command names, values are the command functions:
+While decorators are the preferred way to specify subcommands, subcommands can
+also be specified using the `ArgumentHandler.set_subcommands(...)` function.
+This method expects a dictionary: keys are command names, values are the
+command functions:
 
 	from arghandler import *
 
-	def echo(context,args):
+	def echo(parser,context,args):
 		print ' '.join(args)
 	
-	def cmd_foobar(context,args):
+	def cmd_foobar(parser,context,args):
 		print 'foobar'
 
 	handler = ArgumentHandler()
@@ -179,15 +201,13 @@ ensure that informative help messages are available for all your subcommands.
 	from arghandler import *
 
 	@subcmd
-	def echo(context,args):
-		handler = ArgumentHandler()
-		handler.ignore_subcommands()
-		handler.add_argument('-q','--quote_char',required=True)
-		args = handler.parse_args(args)
+	def echo(parser,context,args):
+		parser.add_argument('-q','--quote_char',required=True)
+		args = parser.parse_args(args)
 		print '%s%s%s' % (args.quote_char,' '.join(args),args.quote_char)
 	
 	@subcmd('foobar')
-	def cmd_foobar(context,args):
+	def cmd_foobar(parser,context,args):
 		print 'foobar'
 
 	handler = ArgumentHandler()
