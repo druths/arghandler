@@ -14,26 +14,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import argparse
 from arghandler import *
 import unittest
 
 CONTEXT = 'context'
 context1_equal = False
 context2_equal = False
+parser_correct = False
 cmd1_has_run = False
 cmd2_has_run = False
 
 @subcmd
-def cmd1(context,args):
-	global cmd1_has_run, context1_equal
+def cmd1(parser,context,args):
+	global cmd1_has_run, context1_equal, parser_correct
 
 	cmd1_has_run = True
+	parser_correct = type(parser) == argparse.ArgumentParser
 	
 	context1_equal = (context == CONTEXT)
 	return
 
 @subcmd
-def cmd2(context,args):
+def cmd2(parser,context,args):
 	global cmd2_has_run, context2_equal
 	cmd2_has_run = True
 
@@ -49,6 +52,7 @@ class DecoratorTestCase(unittest.TestCase):
 		handler.run(['-l','cmd1'],context_fxn=lambda x: CONTEXT)
 
 		self.assertTrue(cmd1_has_run)
+		self.assertTrue(parser_correct)
 
 if __name__ == '__main__':
 	unittest.main()

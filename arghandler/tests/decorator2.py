@@ -24,7 +24,7 @@ cmd1_has_run = False
 cmd2_has_run = False
 
 @subcmd('c1')
-def cmd1(context,args):
+def cmd1(parser,context,args):
 	global cmd1_has_run, context1_equal
 
 	cmd1_has_run = True
@@ -33,7 +33,7 @@ def cmd1(context,args):
 	return
 
 @subcmd('c2')
-def cmd2(context,args):
+def cmd2(parser,context,args):
 	global cmd2_has_run, context2_equal
 	cmd2_has_run = True
 

@@ -238,7 +238,10 @@ class ArgumentHandler(argparse.ArgumentParser):
 			context = context_fxn(args)
 
 		if self._use_subcommands:	
+			# create the sub command argument parser
+			scmd_parser = argparse.ArgumentParser(prog='%s %s' % (self.prog,args.cmd))
+
 			# handle the subcommands
-			self._subcommand_lookup[args.cmd](context,args.cargs)	
+			self._subcommand_lookup[args.cmd](scmd_parser,context,args.cargs)	
 
 		return

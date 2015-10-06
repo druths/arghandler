@@ -16,6 +16,7 @@ limitations under the License.
 
 import unittest
 import logging
+import argparse
 from arghandler import *
 
 class LoggingTestCase(unittest.TestCase):
@@ -34,8 +35,9 @@ class ContextTestCase(unittest.TestCase):
 	def test_default_context(self):
 		self.cmd1_has_run = False
 
-		def cmd1(context,args):
+		def cmd1(parser,context,args):
 			self.cmd1_has_run = True
+			self.assertEquals(type(parser),argparse.ArgumentParser)
 			self.assertTrue(context.link)
 			self.assertEqual(context.arg2,'foobar')
 
@@ -53,7 +55,7 @@ class ContextTestCase(unittest.TestCase):
 		self.cmd_has_run = False
 		self.CONTEXT = 'context'
 
-		def cmd1(context,args):
+		def cmd1(parser,context,args):
 			self.cmd_has_run = True
 			self.assertEqual(context,self.CONTEXT)
 			self.assertEqual(args[0],'foobar')
