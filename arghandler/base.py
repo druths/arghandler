@@ -205,7 +205,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 				subcommands_help_text += '\n'
 			self.add_argument('cmd',choices=self._subcommand_lookup.keys(), help = subcommands_help_text, metavar = 'subcommand')
 			self.add_argument('cargs',nargs=argparse.REMAINDER,
-								help='arguments for the subcommand')
+								help=argparse.SUPPRESS)
 
 		# parse arguments
 		args = argparse.ArgumentParser.parse_args(self,argv)
