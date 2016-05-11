@@ -96,7 +96,7 @@ the line
 near the top (in the first 1024 bytes).  For more details on this, see the
 [argcomplete](https://argcomplete.readthedocs.io/en/latest/) documentation.
 
-For an example of this in action, see `examples/dummy.py`.
+For an example of this in action, see [examples/dummy.py!](examples/dummy.py).
 
 ### Setting the logging level ###
 
