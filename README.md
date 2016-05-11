@@ -80,6 +80,24 @@ subcommands.  As with `parse_args(...)`, if `argv` is not specified, then
 part of subcommand processing.  See that [section](#subcommands) below for more
 details.
 
+#### Enabling autocompletion ####
+
+When constructing an `ArgumentHandler`, you can enable autocompletion.  This
+requires doing two separate things.
+
+First, pass the keyword argument `enable_autocompetion=True` to
+`ArgumentHandler(...)`.
+
+Second, in the top-level script that will be your command-line tool, include
+the line
+
+	# PYTHON_ARGCOMPLETE_OK
+
+near the top (in the first 1024 bytes).  For more details on this, see the
+[argcomplete](https://argcomplete.readthedocs.io/en/latest/) documentation.
+
+For an example of this in action, see `examples/dummy.py`.
+
 ### Setting the logging level ###
 
 If you use the python [logging](https://docs.python.org/3/library/logging.html)

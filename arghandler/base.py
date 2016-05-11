@@ -78,10 +78,15 @@ class ArgumentHandler(argparse.ArgumentParser):
 		  * `use_short_help [=False]`: when printing out the help message, use a shortened
 		    version of the help message that simply shows the sub-commands supported and
 			their description.
+
+		  * `enable_autocompletion [=False]`: make it so that the command line
+		    supports autocompletion
+
 		"""
 
 		### extract any special keywords here
 		self._use_short_help = kwargs.pop('use_short_help',False)
+		self._enable_autocompletion = kwargs.pop('enable_autocompletion',False)
 
 		# some internal logic management info
 		self._logging_argument = None
@@ -227,6 +232,11 @@ class ArgumentHandler(argparse.ArgumentParser):
 
 			cargs_help_msg = 'arguments for the subcommand' if not self._use_short_help else argparse.SUPPRESS
 			self.add_argument('cargs',nargs=argparse.REMAINDER,help=cargs_help_msg)
+
+		# handle autocompletion if requested
+		if self._enable_autocompletion:
+			import argcomplete
+			argcomplete.autocomplete(self)
 
 		# parse arguments
 		args = argparse.ArgumentParser.parse_args(self,argv)
