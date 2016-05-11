@@ -8,6 +8,8 @@
 
 ### Changed
 
+  * `Arghandler.run` now returns the arguments parsed from the argument list.
+
 ### Depricated
 
 ### Removed

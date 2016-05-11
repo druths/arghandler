@@ -249,6 +249,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 			 the `context_fxn` is called.  This function accepts one argument -
 			 the namespace returned by a call to `parse_args`.
 
+		The parsed arguments are all returned.
 		"""
 		# get the arguments
 		args = self.parse_args(argv)
@@ -275,4 +276,4 @@ class ArgumentHandler(argparse.ArgumentParser):
 			# handle the subcommands
 			self._subcommand_lookup[args.cmd](scmd_parser,context,args.cargs)
 
-		return
+		return args
