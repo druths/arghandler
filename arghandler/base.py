@@ -37,27 +37,29 @@ def default_log_config(level,args):
 # decorator
 #################################
 registered_subcommands = {}
-def subcmd(arg):
+registered_subcommands_help = {}
+def subcmd(arg=None, **kwargs):
 	"""
 	This decorator is used to register functions as subcommands with instances
 	of ArgumentHandler.
 	"""
 	if inspect.isfunction(arg):
-		return subcmd_fxn(arg,arg.__name__)
+		return subcmd_fxn(arg,arg.__name__, kwargs)
 	else:
 		def inner_subcmd(fxn):
-			return subcmd_fxn(fxn,arg)
+			return subcmd_fxn(fxn, arg, kwargs)
 
 		return inner_subcmd
 
-def subcmd_fxn(cmd_fxn,name):
+def subcmd_fxn(cmd_fxn,name,kwargs):
 	global registered_subcommands
-	
+
 	# get the name of the command
-	if name is None:	
+	if name is None:
 		name = cmd_fxn.__name__
-	
+
 	registered_subcommands[name] = cmd_fxn
+	registered_subcommands_help[name] = kwargs.pop('help','')
 
 	return cmd_fxn
 
@@ -70,10 +72,16 @@ class ArgumentHandler(argparse.ArgumentParser):
 	def __init__(self,*args,**kwargs):
 		"""
 		All constructor arguments are the same as found in `argparse.ArgumentParser`.
+
+		kwargs
+		------
+		  * `use_short_help [=False]`: when printing out the help message, use a shortened
+		    version of the help message that simply shows the sub-commands supported and
+			their description.
 		"""
-		
+
 		### extract any special keywords here
-		# None to extract...
+		self._use_short_help = kwargs.pop('use_short_help',False)
 
 		# some internal logic management info
 		self._logging_argument = None
@@ -81,11 +89,15 @@ class ArgumentHandler(argparse.ArgumentParser):
 		self._ignore_remainder = False
 		self._use_subcommands = True
 		self._subcommand_lookup = dict()
+		self._subcommand_help = dict()
 
 		self._has_parsed = False
 
 		# setup the class
-		argparse.ArgumentParser.__init__(self,*args,**kwargs)
+		if self._use_short_help:
+			argparse.ArgumentParser.__init__(self,formatter_class = argparse.RawTextHelpFormatter,*args,**kwargs)
+		else:
+			argparse.ArgumentParser.__init__(self,*args,**kwargs)
 
 	def ignore_subcommands(self):
 		"""
@@ -133,14 +145,14 @@ class ArgumentHandler(argparse.ArgumentParser):
 			raise ValueError('the default logging level must be a valid logging level')
 
 		default_level = LOG_LEVEL_STR_LOOKUP[default_level]
-		
+
 		self._logging_config_fxn = config_fxn
 
 		self.add_argument(*names,choices=['DEBUG','INFO','WARNING','ERROR','CRITICAL'],
 							default=default_level)
 
 		return
-		
+
 	def add_argument(self,*args,**kwargs):
 		"""
 		This has the same functionality as `argparse.ArgumentParser.add_argument`.
@@ -154,31 +166,39 @@ class ArgumentHandler(argparse.ArgumentParser):
 
 	def set_subcommands(self,subcommand_lookup):
 		"""
-		Provide a set of subcommands that this instance of ArgumentHandler should 
+		Provide a set of subcommands that this instance of ArgumentHandler should
 		support.  This is an alternative to using the decorator `@subcmd`. Note that
-		the total set of subcommands supported will be those specified in this method 
+		the total set of subcommands supported will be those specified in this method
 		combined with those identified by the decorator.
 		"""
 		if type(subcommand_lookup) is not dict:
 			raise TypeError('subcommands must be specified as a dict')
 
 		# sanity check the subcommands
+		self._subcommand_lookup = {}
+		self._subcommand_help = {}
 		for cn,cf in subcommand_lookup.items():
 			if type(cn) is not str:
 				raise TypeError('subcommand keys must be strings. Found %s' % str(cn))
-			if not callable(cf):
+			if type(cf) == tuple:
+				if not callable(cf[0]):
+					raise TypeError('subcommand with name %s must be callable' % cn)
+				else:
+					self._subcommand_lookup[cn] = cf[0]
+					self._subcommand_help[cn] = cf[1]
+			elif not callable(cf):
 				raise TypeError('subcommand with name %s must be callable' % cn)
-
-		# store the subcommands
-		self._subcommand_lookup = dict(subcommand_lookup)
+			else:
+				self._subcommand_lookup[cn] = cf
+				self._subcommand_help[cn] = ''
 
 		return
 
-	def parse_args(self,argv=None):	
+	def parse_args(self,argv=None):
 		"""
 		Works the same as `argparse.ArgumentParser.parse_args`.
 		"""
-		global registered_subcommands
+		global registered_subcommands, registered_subcommands_help
 
 		if self._has_parsed:
 			raise Exception('ArgumentHandler.parse_args can only be called once')
@@ -186,6 +206,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 		# collect subcommands into _subcommand_lookup
 		for cn,cf in registered_subcommands.items():
 			self._subcommand_lookup[cn] = cf
+			self._subcommand_help[cn] = registered_subcommands_help[cn]
 
 		if len(self._subcommand_lookup) == 0:
 			self._use_subcommands = False
@@ -194,13 +215,23 @@ class ArgumentHandler(argparse.ArgumentParser):
 		if not self._use_subcommands:
 			pass
 		else:
-			self.add_argument('cmd',choices=self._subcommand_lookup.keys())
-			self.add_argument('cargs',nargs=argparse.REMAINDER,
-								help='arguments for the subcommand')
+			max_cmd_length = max([len(x) for x in self._subcommand_lookup.keys()])
+			subcommands_help_text = 'the subcommand to run'
+			if self._use_short_help:
+				subcommands_help_text = '\n'
+				for command in self._subcommand_lookup.keys():
+					subcommands_help_text += command.ljust(max_cmd_length+2)
+					subcommands_help_text += self._subcommand_help[command]
+					subcommands_help_text += '\n'
+			self.add_argument('cmd',choices=self._subcommand_lookup.keys(),help=subcommands_help_text,metavar='subcommand')
+
+			cargs_help_msg = 'arguments for the subcommand' if not self._use_short_help else argparse.SUPPRESS
+			self.add_argument('cargs',nargs=argparse.REMAINDER,help=cargs_help_msg)
 
 		# parse arguments
 		args = argparse.ArgumentParser.parse_args(self,argv)
 		self._has_parse = True
+
 		return args
 
 	def run(self,argv=None,context_fxn=None):
@@ -210,9 +241,9 @@ class ArgumentHandler(argparse.ArgumentParser):
 		  1) Parse the arguments in `argv`. If not specified, `sys.argv` is
 		     used.
 
-		  2) Configure the logging level.  This only happens if the 
+		  2) Configure the logging level.  This only happens if the
 		     `set_logging_argument` was called.
-		  
+
 		  3) Run the appropriate subcommand.  This only happens if subcommands
 		     are available and enabled. Prior to the subcommand being run,
 			 the `context_fxn` is called.  This function accepts one argument -
@@ -225,7 +256,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 		# handle the logging argument
 		if self._logging_argument:
 			level = eval('args.%s' % self._logging_argument)
-			
+
 			# convert the level
 			level = eval('logging.%s' % level)
 
@@ -237,11 +268,11 @@ class ArgumentHandler(argparse.ArgumentParser):
 		if context_fxn:
 			context = context_fxn(args)
 
-		if self._use_subcommands:	
+		if self._use_subcommands:
 			# create the sub command argument parser
 			scmd_parser = argparse.ArgumentParser(prog='%s %s' % (self.prog,args.cmd))
 
 			# handle the subcommands
-			self._subcommand_lookup[args.cmd](scmd_parser,context,args.cargs)	
+			self._subcommand_lookup[args.cmd](scmd_parser,context,args.cargs)
 
 		return

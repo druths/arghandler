@@ -31,9 +31,9 @@ Use `pip` or `easy_install` to install the library:
 
 	pip install arghandler
 
-or 
+or
 
-	easy_install arghandler 
+	easy_install arghandler
 
 You can find arghandler on pypi for relevant details should you need them.
 
@@ -92,18 +92,18 @@ several arguments:
 	ArgumentParser.set_logging_argument(*names,default_level=logging.ERROR,config_fxn=None)
 
 
-  * `*names` stands in for one or more arguments that specify the 
+  * `*names` stands in for one or more arguments that specify the
 	argument names that will be used. These follow the same rules as ones
 	passed into
 	[ArgumentParser.add_argument(...)](https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument).
 	Moreover, they MUST be optional arguments (i.e., start with a '-'
 	character).
 
-  * `default_level` indicates the default level the logging 
+  * `default_level` indicates the default level the logging
 	framework will be set to should the level not be specified on the command
 	line.
 
-  * `config_fxn` allows the developer to write special logging 
+  * `config_fxn` allows the developer to write special logging
 	configuration code.  If not specified, the
 	[logging.basicConfig](https://docs.python.org/3/library/logging.html#logging.basicConfig)
 	function will be invoked with the appropriate logging level. The function
@@ -133,19 +133,19 @@ decorator on the function  you want to act as the subcommand.
 	@subcmd
 	def echo(parser,context,args):
 		print ' '.join(args)
-	
+
 	# here we associate the subcommand 'foobar' with function cmd_foobar
-	@subcmd('foobar')
+	@subcmd('foobar', help = 'Does foobar')
 	def cmd_foobar(parser,context,args):
 		print 'foobar'
 
 	handler = ArgumentHandler()
 	handler.run(['echo','hello','world']) # echo will be called and 'hello world' will be printed
 
-Notice that the subcommands always take three arguments. 
+Notice that the subcommands always take three arguments.
 
 `args` is the set of arguments that *follow* the subcommand on the command
-line. 
+line.
 
 `context` is an object that can make valuable global information available to
 subcommands.  By default, the context is the namespace object returned by the
@@ -181,7 +181,7 @@ command functions:
 
 	def echo(parser,context,args):
 		print ' '.join(args)
-	
+
 	def cmd_foobar(parser,context,args):
 		print 'foobar'
 
@@ -192,6 +192,23 @@ command functions:
 All the logic and rules around the context function apply here.  Moreoever, the
 complete set of subcommands include those specified using decorators AND those
 specified through the `set_subcommands(...)` method.
+
+### Setting the help message ###
+
+The format of the help message can be set to one more friendly for subcommands
+by passing the `ArgumentHandler` constructor the keyword argument
+`use_short_help=True`.
+
+This will produce a help message that looks something like this:
+
+	usage: test.py [-h] subcommand
+
+	positional arguments:
+	  subcommand
+        cmd1  cmd1_help_str
+
+	optional arguments:
+  	  -h, --help  show this help message and exit
 
 ## Some best practices ##
 
@@ -205,7 +222,7 @@ ensure that informative help messages are available for all your subcommands.
 		parser.add_argument('-q','--quote_char',required=True)
 		args = parser.parse_args(args)
 		print '%s%s%s' % (args.quote_char,' '.join(args),args.quote_char)
-	
+
 	@subcmd('foobar')
 	def cmd_foobar(parser,context,args):
 		print 'foobar'
@@ -216,5 +233,3 @@ ensure that informative help messages are available for all your subcommands.
 *Use logging.* Logging gives you much more control over what
 debugging/informational content is printed out by your program. And with
 `arghandler` it's easier than ever to configure from the command line!
-
-
