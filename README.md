@@ -193,6 +193,23 @@ All the logic and rules around the context function apply here.  Moreoever, the
 complete set of subcommands include those specified using decorators AND those
 specified through the `set_subcommands(...)` method.
 
+### Setting the help message ###
+
+The format of the help message can be set to one more friendly for subcommands
+by passing the `ArgumentHandler` constructor the keyword argument
+`use_short_help=True`.
+
+This will produce a help message that looks something like this:
+
+	usage: test.py [-h] subcommand
+
+	positional arguments:
+	  subcommand
+        cmd1  cmd1_help_str
+
+	optional arguments:
+  	  -h, --help  show this help message and exit
+
 ## Some best practices ##
 
 *Use `ArgumentParser` or `ArgumentHandler` inside subcommands.* This will

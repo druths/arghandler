@@ -51,7 +51,7 @@ def subcmd(arg=None, **kwargs):
 
 		return inner_subcmd
 
-def subcmd_fxn(cmd_fxn,name, kwargs):
+def subcmd_fxn(cmd_fxn,name,kwargs):
 	global registered_subcommands
 
 	# get the name of the command
@@ -59,8 +59,7 @@ def subcmd_fxn(cmd_fxn,name, kwargs):
 		name = cmd_fxn.__name__
 
 	registered_subcommands[name] = cmd_fxn
-	if 'help' in kwargs:
-		registered_subcommands_help[name] = kwargs['help']
+	registered_subcommands_help[name] = kwargs.pop('help','')
 
 	return cmd_fxn
 
@@ -73,10 +72,16 @@ class ArgumentHandler(argparse.ArgumentParser):
 	def __init__(self,*args,**kwargs):
 		"""
 		All constructor arguments are the same as found in `argparse.ArgumentParser`.
+
+		kwargs
+		------
+		  * `use_short_help [=False]`: when printing out the help message, use a shortened
+		    version of the help message that simply shows the sub-commands supported and
+			their description.
 		"""
 
 		### extract any special keywords here
-		# None to extract...
+		self._use_short_help = kwargs.pop('use_short_help',False)
 
 		# some internal logic management info
 		self._logging_argument = None
@@ -84,11 +89,15 @@ class ArgumentHandler(argparse.ArgumentParser):
 		self._ignore_remainder = False
 		self._use_subcommands = True
 		self._subcommand_lookup = dict()
+		self._subcommand_help = dict()
 
 		self._has_parsed = False
 
 		# setup the class
-		argparse.ArgumentParser.__init__(self, formatter_class = argparse.RawTextHelpFormatter, *args,**kwargs)
+		if self._use_short_help:
+			argparse.ArgumentParser.__init__(self,formatter_class = argparse.RawTextHelpFormatter,*args,**kwargs)
+		else:
+			argparse.ArgumentParser.__init__(self,*args,**kwargs)
 
 	def ignore_subcommands(self):
 		"""
@@ -166,14 +175,22 @@ class ArgumentHandler(argparse.ArgumentParser):
 			raise TypeError('subcommands must be specified as a dict')
 
 		# sanity check the subcommands
+		self._subcommand_lookup = {}
+		self._subcommand_help = {}
 		for cn,cf in subcommand_lookup.items():
 			if type(cn) is not str:
 				raise TypeError('subcommand keys must be strings. Found %s' % str(cn))
-			if not callable(cf):
+			if type(cf) == tuple:
+				if not callable(cf[0]):
+					raise TypeError('subcommand with name %s must be callable' % cn)
+				else:
+					self._subcommand_lookup[cn] = cf[0]
+					self._subcommand_help[cn] = cf[1]
+			elif not callable(cf):
 				raise TypeError('subcommand with name %s must be callable' % cn)
-
-		# store the subcommands
-		self._subcommand_lookup = dict(subcommand_lookup)
+			else:
+				self._subcommand_lookup[cn] = cf
+				self._subcommand_help[cn] = ''
 
 		return
 
@@ -181,7 +198,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 		"""
 		Works the same as `argparse.ArgumentParser.parse_args`.
 		"""
-		global registered_subcommands
+		global registered_subcommands, registered_subcommands_help
 
 		if self._has_parsed:
 			raise Exception('ArgumentHandler.parse_args can only be called once')
@@ -189,6 +206,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 		# collect subcommands into _subcommand_lookup
 		for cn,cf in registered_subcommands.items():
 			self._subcommand_lookup[cn] = cf
+			self._subcommand_help[cn] = registered_subcommands_help[cn]
 
 		if len(self._subcommand_lookup) == 0:
 			self._use_subcommands = False
@@ -197,19 +215,23 @@ class ArgumentHandler(argparse.ArgumentParser):
 		if not self._use_subcommands:
 			pass
 		else:
-			subcommands_help_text = '\n'
-			for command in self._subcommand_lookup.keys():
-				subcommands_help_text += command
-				if command in registered_subcommands_help:
-					subcommands_help_text += '\t\t' + registered_subcommands_help[command]
-				subcommands_help_text += '\n'
-			self.add_argument('cmd',choices=self._subcommand_lookup.keys(), help = subcommands_help_text, metavar = 'subcommand')
-			self.add_argument('cargs',nargs=argparse.REMAINDER,
-								help=argparse.SUPPRESS)
+			max_cmd_length = max([len(x) for x in self._subcommand_lookup.keys()])
+			subcommands_help_text = 'the subcommand to run'
+			if self._use_short_help:
+				subcommands_help_text = '\n'
+				for command in self._subcommand_lookup.keys():
+					subcommands_help_text += command.ljust(max_cmd_length+2)
+					subcommands_help_text += self._subcommand_help[command]
+					subcommands_help_text += '\n'
+			self.add_argument('cmd',choices=self._subcommand_lookup.keys(),help=subcommands_help_text,metavar='subcommand')
+
+			cargs_help_msg = 'arguments for the subcommand' if not self._use_short_help else argparse.SUPPRESS
+			self.add_argument('cargs',nargs=argparse.REMAINDER,help=cargs_help_msg)
 
 		# parse arguments
 		args = argparse.ArgumentParser.parse_args(self,argv)
 		self._has_parse = True
+
 		return args
 
 	def run(self,argv=None,context_fxn=None):

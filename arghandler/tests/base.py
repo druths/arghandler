@@ -13,11 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+import sys
 import unittest
 import logging
 import argparse
 from arghandler import *
+
+import multiprocessing
 
 class LoggingTestCase(unittest.TestCase):
 
@@ -30,6 +32,39 @@ class LoggingTestCase(unittest.TestCase):
 		logger = logging.getLogger()
 		self.assertEqual(logger.level,logging.ERROR)
 		
+class ShortHelpTestCase(unittest.TestCase):
+	
+	def test_short_text(self):
+		def do_test(handler,args):
+			original_stdout = sys.stdout
+			sys.stdout = open('/tmp/short_text.out','w')
+			original_stderr = sys.stderr
+			sys.stderr = open('/tmp/short_text.err','w')
+		
+			handler.run(args)
+
+			sys.stdout.close()
+			sys.stdout = original_stdout
+			sys.stderr.close()
+			sys.stderr = original_stderr
+		
+		def cmd1(parser,context,args):
+			pass
+
+		handler = ArgumentHandler(use_short_help=True)
+		handler.set_subcommands({'cmd1':(cmd1,'cmd1_help_str')})
+
+		p = multiprocessing.Process(target=do_test,args=(handler,['-h']))
+		p.start()
+		p.join()
+
+
+		# check for the cmd1 help message
+		out_contents = open('/tmp/short_text.out','r').read()
+		err_contents = open('/tmp/short_text.err','r').read()
+
+		self.assertTrue('cmd1_help_str' in out_contents)
+
 class ContextTestCase(unittest.TestCase):
 
 	def test_default_context(self):
