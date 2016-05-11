@@ -215,7 +215,7 @@ specified through the `set_subcommands(...)` method.
 
 The format of the help message can be set to one more friendly for subcommands
 by passing the `ArgumentHandler` constructor the keyword argument
-`use_short_help=True`.
+`use_subcommand_help=True`.
 
 This will produce a help message that looks something like this:
 

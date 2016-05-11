@@ -75,7 +75,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 
 		kwargs
 		------
-		  * `use_short_help [=False]`: when printing out the help message, use a shortened
+		  * `use_subcommand_help [=False]`: when printing out the help message, use a shortened
 		    version of the help message that simply shows the sub-commands supported and
 			their description.
 
@@ -85,7 +85,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 		"""
 
 		### extract any special keywords here
-		self._use_short_help = kwargs.pop('use_short_help',False)
+		self._use_subcommand_help = kwargs.pop('use_subcommand_help',False)
 		self._enable_autocompletion = kwargs.pop('enable_autocompletion',False)
 
 		# some internal logic management info
@@ -99,7 +99,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 		self._has_parsed = False
 
 		# setup the class
-		if self._use_short_help:
+		if self._use_subcommand_help:
 			argparse.ArgumentParser.__init__(self,formatter_class = argparse.RawTextHelpFormatter,*args,**kwargs)
 		else:
 			argparse.ArgumentParser.__init__(self,*args,**kwargs)
@@ -222,7 +222,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 		else:
 			max_cmd_length = max([len(x) for x in self._subcommand_lookup.keys()])
 			subcommands_help_text = 'the subcommand to run'
-			if self._use_short_help:
+			if self._use_subcommand_help:
 				subcommands_help_text = '\n'
 				for command in self._subcommand_lookup.keys():
 					subcommands_help_text += command.ljust(max_cmd_length+2)
@@ -230,7 +230,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 					subcommands_help_text += '\n'
 			self.add_argument('cmd',choices=self._subcommand_lookup.keys(),help=subcommands_help_text,metavar='subcommand')
 
-			cargs_help_msg = 'arguments for the subcommand' if not self._use_short_help else argparse.SUPPRESS
+			cargs_help_msg = 'arguments for the subcommand' if not self._use_subcommand_help else argparse.SUPPRESS
 			self.add_argument('cargs',nargs=argparse.REMAINDER,help=cargs_help_msg)
 
 		# handle autocompletion if requested
