@@ -32,9 +32,9 @@ class LoggingTestCase(unittest.TestCase):
 		logger = logging.getLogger()
 		self.assertEqual(logger.level,logging.ERROR)
 		
-class ShortHelpTestCase(unittest.TestCase):
+class SubcommandHelpTestCase(unittest.TestCase):
 	
-	def test_short_text(self):
+	def test_subcommand_text(self):
 		def do_test(handler,args):
 			original_stdout = sys.stdout
 			sys.stdout = open('/tmp/short_text.out','w')
@@ -51,7 +51,7 @@ class ShortHelpTestCase(unittest.TestCase):
 		def cmd1(parser,context,args):
 			pass
 
-		handler = ArgumentHandler(use_short_help=True)
+		handler = ArgumentHandler(use_subcommand_help=True)
 		handler.set_subcommands({'cmd1':(cmd1,'cmd1_help_str')})
 
 		p = multiprocessing.Process(target=do_test,args=(handler,['-h']))
