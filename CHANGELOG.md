@@ -4,6 +4,20 @@
 
 ### Added
 
+### Changed
+
+### Depricated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## Version 1.2.0
+
+### Added
+
   * The ability to print a short help message, better suited to sub-commands.
   * Autocompletion support using argcomplete. A new dependency of the library.
   * Added `reset_registered_subcommands` function, primarily for testing
