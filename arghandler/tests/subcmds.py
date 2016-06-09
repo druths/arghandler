@@ -12,7 +12,7 @@ class SubCmdTestCase(unittest.TestCase):
 
 		@subcmd('foobar', help='Does foobar')
 		def cmd_foobar(parser, context, args):
-		    print 'foobar'
+		    pass
 
 		handler = ArgumentHandler()
 		handler.run(['foobar','hello','world'])
