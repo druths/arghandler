@@ -19,7 +19,7 @@ import argparse
 import logging
 import inspect
 
-__all__ = ['ArgumentHandler','LOG_LEVEL','subcmd']
+__all__ = ['ArgumentHandler','LOG_LEVEL','subcmd','reset_registered_subcommands']
 
 LOG_LEVEL='log_level'
 
@@ -52,7 +52,7 @@ def subcmd(arg=None, **kwargs):
 		return inner_subcmd
 
 def subcmd_fxn(cmd_fxn,name,kwargs):
-	global registered_subcommands
+	global registered_subcommands, registered_subcommands_help
 
 	# get the name of the command
 	if name is None:
@@ -62,6 +62,14 @@ def subcmd_fxn(cmd_fxn,name,kwargs):
 	registered_subcommands_help[name] = kwargs.pop('help','')
 
 	return cmd_fxn
+
+def reset_registered_subcommands():
+	"""
+	Forget about all subcommands that have been registered using @subcmd.
+	"""
+	global registered_subcommands, registered_subcommands_help
+	registered_subcommands = {}
+	registered_subcommands_help = {}
 
 #########################
 # ArgumentHandler class
