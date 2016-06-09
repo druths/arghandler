@@ -5,7 +5,7 @@ class SubCmdTestCase(unittest.TestCase):
 	
 	def test_use_subcmd(self):
 		reset_registered_subcommands()
-		import subcmds1
+		import arghandler.tests.subcmds1
 
 	def test_reported(self):
 		reset_registered_subcommands()
