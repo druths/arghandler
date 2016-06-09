@@ -17,6 +17,7 @@ limitations under the License.
 import unittest
 
 from arghandler.tests.base import *
+from arghandler.tests.subcmds import *
 
 if __name__ == '__main__':
 	unittest.main()

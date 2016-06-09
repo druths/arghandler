@@ -24,6 +24,8 @@ import multiprocessing
 class LoggingTestCase(unittest.TestCase):
 
 	def test_default_config(self):
+		reset_registered_subcommands()
+
 		handler = ArgumentHandler()
 		handler.set_logging_argument('-L','--logging')
 
@@ -35,6 +37,8 @@ class LoggingTestCase(unittest.TestCase):
 class SubcommandHelpTestCase(unittest.TestCase):
 	
 	def test_subcommand_text(self):
+		reset_registered_subcommands()
+
 		def do_test(handler,args):
 			original_stdout = sys.stdout
 			sys.stdout = open('/tmp/short_text.out','w')
@@ -68,6 +72,8 @@ class SubcommandHelpTestCase(unittest.TestCase):
 class ContextTestCase(unittest.TestCase):
 
 	def test_default_context(self):
+		reset_registered_subcommands()
+		
 		self.cmd1_has_run = False
 
 		def cmd1(parser,context,args):
@@ -86,6 +92,8 @@ class ContextTestCase(unittest.TestCase):
 		self.assertTrue(self.cmd1_has_run)
 
 	def test_run_testcase(self):
+		reset_registered_subcommands()
+
 		self.context_has_run = False
 		self.cmd_has_run = False
 		self.CONTEXT = 'context'
