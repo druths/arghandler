@@ -10,7 +10,7 @@ setup(	name='arghandler',
 		url='http://www.github.com/druths/arghandler',
 		packages=['arghandler','arghandler.tests'],
 
-		install_requires = [ 'argcomplete' ],
+		install_requires = ['argcomplete', 'configargparse'],
 
 		license='Apache',
 
