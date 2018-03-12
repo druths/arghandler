@@ -15,11 +15,11 @@ limitations under the License.
 """
 
 import sys
-import argparse
+import configargparse as argparse
 import logging
 import inspect
 
-__all__ = ['ArgumentHandler','LOG_LEVEL','subcmd','reset_registered_subcommands']
+__all__ = ['ArgumentHandler', 'LOG_LEVEL','subcmd','reset_registered_subcommands']
 
 LOG_LEVEL='log_level'
 
@@ -79,7 +79,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 
 	def __init__(self,*args,**kwargs):
 		"""
-		All constructor arguments are the same as found in `argparse.ArgumentParser`.
+		All constructor arguments are the same as found in `configargparse.ArgumentParser`.
 
 		kwargs
 		------
