@@ -289,7 +289,8 @@ class ArgumentHandler(argparse.ArgumentParser):
 
 		if self._use_subcommands:
 			# create the sub command argument parser
-			scmd_parser = argparse.ArgumentParser(prog='%s %s' % (self.prog,args.cmd))
+			scmd_parser = argparse.ArgumentParser(prog='%s %s' % (self.prog,args.cmd),
+                                                  description=self._subcommand_help[args.cmd])
 
 			# handle the subcommands
 			self._subcommand_lookup[args.cmd](scmd_parser,context,args.cargs)
