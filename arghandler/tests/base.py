@@ -78,7 +78,7 @@ class ContextTestCase(unittest.TestCase):
 
 		def cmd1(parser,context,args):
 			self.cmd1_has_run = True
-			self.assertEquals(type(parser),argparse.ArgumentParser)
+			self.assertEqual(type(parser),argparse.ArgumentParser)
 			self.assertTrue(context.link)
 			self.assertEqual(context.arg2,'foobar')
 
