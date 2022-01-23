@@ -211,6 +211,61 @@ All the logic and rules around the context function apply here.  Moreoever, the
 complete set of subcommands include those specified using decorators AND those
 specified through the `set_subcommands(...)` method.
 
+#### Making subcommands in subcommands ####
+One valuable use for the `set_subcommands(...)` method is implementing
+subcommand options for a subcommand.  For example, suppose you want a program with the following
+command subtree:
+
+```
+power
+  - create
+    - config
+    - proj
+  - run
+    - all
+    - proj
+```
+
+In this case, `create` and `run` would be top-level subcommands that could be
+declared using standard `subcmd` decorators.  But what about the `config` and
+`proj` commands underneath `create`?  These can be created using a new
+`ArgumentHandler` inside the `create` function like this:
+
+```
+def create_config(parser, context, args):
+    parser.add_argument('location')
+    args = parser.parse_args(args)
+
+    # do stuff
+
+    return
+
+def create_proj(parser, context, args):
+    parser.add_argument('name')
+    args = parser.parse_args(args)
+
+    print(f'Creating the project: {args.name}')
+
+    # do stuff
+
+    return
+
+
+@subcmd('create', help='create a resource')
+def create(parser, context, args):
+    handler = ArgumentHandler()
+
+    handler.set_subcommands({'config': (create_config, 'create a config file'),
+                             'proj': (create_proj, 'create a project')
+                            },
+                            use_registered_subcmds=False)
+    
+    handler.run(args)
+```
+
+Note the use of `use_registered_subcmds=False` - this is important to omit any
+functions globally registered as commands using the `@subcmd` decorator.
+
 ### Setting the help message ###
 
 The format of the help message can be set to one more friendly for subcommands
