@@ -4,7 +4,7 @@
 from setuptools import setup
 
 setup(  name='arghandler',
-        version='1.2.0',
+        version='1.3.0',
         description='argparse extended with awesome feature enhancements to make life easier',
         author='Derek Ruths',
         author_email='druths@networkdynamics.org',
