@@ -239,7 +239,7 @@ class ArgumentHandler(argparse.ArgumentParser):
             subcommands_help_text = 'the subcommand to run'
             if self._use_subcommand_help:
                 subcommands_help_text = '\n'
-                for command in self._subcommand_lookup.keys():
+                for command in sorted(self._subcommand_lookup.keys()):
                     subcommands_help_text += command.ljust(max_cmd_length+2)
                     subcommands_help_text += self._subcommand_help[command]
                     subcommands_help_text += '\n'
