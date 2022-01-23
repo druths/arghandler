@@ -5,12 +5,12 @@ from arghandler import ArgumentHandler, subcmd
 
 @subcmd('echo')
 def echo(parser,context,args):
-    print args  
+    print(args)
 
 @subcmd('add')
 def add(parser,context,args):
-    print sum(args)
+    print(sum(args))
 
 if __name__ == '__main__':
-    handler = ArgumentHandler(enable_autocompletion=True)
+    handler = ArgumentHandler(use_subcommand_help=True, enable_autocompletion=True)
     handler.run()
