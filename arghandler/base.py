@@ -83,7 +83,7 @@ class ArgumentHandler(argparse.ArgumentParser):
 
         kwargs
         ------
-          * `use_subcommand_help [=False]`: when printing out the help message, use a shortened
+          * `use_subcommand_help [=True]`: when printing out the help message, use a shortened
             version of the help message that simply shows the sub-commands supported and
             their description.
 
@@ -93,8 +93,8 @@ class ArgumentHandler(argparse.ArgumentParser):
         """
 
         ### extract any special keywords here
-        self._use_subcommand_help = kwargs.pop('use_subcommand_help',False)
-        self._enable_autocompletion = kwargs.pop('enable_autocompletion',False)
+        self._use_subcommand_help = kwargs.pop('use_subcommand_help', True)
+        self._enable_autocompletion = kwargs.pop('enable_autocompletion', False)
 
         # some internal logic management info
         self._logging_argument = None
