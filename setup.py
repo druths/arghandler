@@ -3,9 +3,14 @@
 #from distutils.core import setup
 from setuptools import setup
 
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
 setup(  name='arghandler',
         version='1.3.0',
         description='argparse extended with awesome feature enhancements to make life easier',
+        long_description=long_description,
+        long_description_content_type="text/markdown",
         author='Derek Ruths',
         author_email='druths@networkdynamics.org',
         url='http://www.github.com/druths/arghandler',
